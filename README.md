@@ -8,4 +8,4 @@ SELECT first_name, last_name FROM actor Order BY actor_id ASC LIMIT 1;
 -- select the last row 
 SELECT first_name, last_name FROM actor Order BY actor_id DESC LIMIT 1;
 
-![q1a_output](https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q1a.first.png)
+![q1a_output](https://raw.github.com/yizhiyin86/Mysql_homework/master/screenshot/q1a.first.png)
