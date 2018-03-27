@@ -15,7 +15,7 @@ SELECT first_name, last_name FROM actor Order BY actor_id DESC LIMIT 1;
 
 ## Question 1b. Display the first and last name of each actor in a single column in upper case letters. Name the column `Actor Name`
 ```sql
--- i am goin to concat first_name and last_name with a separator ','
+-- i am goin to concat first_name and last_name with a separator ',' they are already in upper case
 SELECT CONCAT_WS (',', first_name,last_name) AS Actor_Name
 FROM actor;
 ![q1b](screenshot/q1b_Actor_Name.png)
@@ -130,3 +130,193 @@ WHERE
 ![q4d](screenshot/q4d_if_change.png)
 ```
 
+## Question 5a. You cannot locate the schema of the `address` table. Which query would you use to re-create it?
+```sql
+
+![q5a](screenshot/)
+```
+
+## Question 6a. Use `JOIN` to display the first and last names, as well as the address, of each staff member. Use the tables `staff` and `address`:
+```sql
+SELECT staff.first_name, staff.last_name, address. address
+FROM staff 
+INNER JOIN address
+ON staff.address_id=address.address_id;
+![q6a](screenshot/q6a_inner_join.png)
+```
+
+## Question 6b. Use `JOIN` to display the total amount rung up by each staff member in August of 2005. Use tables `staff` and `payment`.
+```sql
+SELECT 
+	s.first_name, s.last_name, p.SUM_Aug
+FROM 
+	staff AS s
+INNER JOIN
+	(SELECT 
+		staff_id, SUM(amount) AS SUM_Aug
+        FROM payment
+        WHERE DATE(payment_date) BETWEEN '2005-08-01' AND '2005-08-31'
+        GROUP BY staff_id) AS p
+ON s.staff_id=p.staff_id;
+![q6b](screenshot/q6b_inner_join_subq.png)
+```
+
+## Question 6c. List each film and the number of actors who are listed for that film. Use tables `film_actor` and `film`. Use inner join.
+```sql
+SELECT 
+	f.title, a.actor_counts
+FROM 
+	film AS f
+INNER JOIN 
+	(SELECT 
+		film_id, COUNT(actor_id) AS actor_counts
+		FROM film_actor
+		GROUP BY film_id) AS a
+ON f.film_id=a.film_id;
+![q6c](screenshot/q6c_inner_join_suq_again.png)
+```
+
+## Question 6d. How many copies of the film `Hunchback Impossible` exist in the inventory system?
+```sql
+SELECT COUNT(*) AS copy
+FROM 
+	inventory
+WHERE 
+	film_id=(SELECT film_id 
+					FROM film
+                    WHERE title='Hunchback Impossible'
+                    );
+
+![q6d](screenshot/q6d_suq_select.png)
+```
+## Question 6e. Using the tables `payment` and `customer` and the `JOIN` command, list the total paid by each customer. List the customers alphabetically by last name:
+```sql
+SELECT c.first_name, c.last_name, p.Total_Amount_Paid
+FROM customer AS c
+-- USE left join just incase some customer does not pay (unlikely but still better to be safe)
+LEFT JOIN 
+				(SELECT 
+					customer_id, SUM(amount) as Total_Amount_Paid
+					FROM 
+						payment
+					GROUP BY 
+						customer_id) AS p
+ON c.customer_id=p.customer_id
+ORDER BY c.last_name ASC;
+
+![q6e](screenshot/q6e_suq_left_join.png)
+```
+
+## Question 7a. The music of Queen and Kris Kristofferson have seen an unlikely resurgence. As an unintended consequence, films starting with the letters `K` and `Q` have also soared in popularity. Use subqueries to display the titles of movies starting with the letters `K` and `Q` whose language is English.
+```sql
+SELECT title
+FROM film
+WHERE 
+	(title LIKE "K%"  OR title LIKE "Q%") 
+AND 
+	(language_id=
+				(SELECT language_id 
+				FROM language
+				WHERE name='English')
+				);
+
+![q7a](screenshot/q7a_K_Q.png)
+```
+
+## Question 7b. Use subqueries to display all actors who appear in the film `Alone Trip`.
+```sql
+SELECT first_name, last_name
+FROM actor
+WHERE actor_id 
+IN 
+	(SELECT actor_id 
+	FROM film_actor
+	WHERE film_id 
+	IN 
+		(SELECT film_id
+		FROM film
+		WHERE title='Alone Trip')
+        );
+
+![q7b](screenshot/q7b_sub_sub.png)
+```
+
+## Question 7c. You want to run an email marketing campaign in Canada, for which you will need the names and email addresses of all Canadian customers. Use joins to retrieve this information.
+```sql
+-- this problem ask to use join but it can also be solved by using where I did both ways
+-- USE join to solve this problem
+SELECT t1.first_name, t1.last_name, t1.email
+FROM 
+			(SELECT c.first_name, c.last_name,c.email,a.city_id
+			FROM customer  AS c
+			INNER JOIN address AS a
+			ON c.address_id=a.address_id) AS t1
+INNER JOIN 
+			(SELECT city_id 
+			FROM city
+			WHERE country_id 
+			IN 
+				(SELECT country_id
+				FROM country
+				WHERE country='Canada')
+				) AS t2
+ON t1.city_id=t2.city_id;
+
+-- USE SELECT WHERE
+SELECT first_name, last_name,email
+FROM customer
+WHERE address_id
+IN 
+	(SELECT address_id 
+	FROM address
+	WHERE city_id 
+	IN 
+		(SELECT city_id 
+					FROM city
+					WHERE country_id 
+					IN 
+						(SELECT country_id
+						FROM country
+						WHERE country='Canada')
+						) 
+						);
+
+![q7c](screenshot/q7c_use_join.png)
+![q7c](screenshot/q7c_use_where.png)
+```
+
+## Question 7d. Sales have been lagging among young families, and you wish to target all family movies for a promotion. Identify all movies categorized as famiy films.
+```sql
+-- seems using join is faster than using where IN 
+-- USE join to solve this problem
+SELECT f.title
+FROM film AS f
+INNER JOIN
+			(SELECT fc.film_id 
+			 FROM film_category AS fc
+			 INNER JOIN 
+						(SELECT category_id
+						FROM category
+						WHERE name='Family') as c
+			ON fc.category_id=c.category_id) AS t
+ON f.film_id=t.film_id;
+
+-- USE SELECT WHERE IN
+SELECT title
+FROM film
+WHERE film_id 
+IN 
+	(
+		(SELECT film_id
+		FROM film_category 
+		WHERE category_id 
+		IN 
+			(SELECT category_id
+			 FROM category
+			 WHERE name='Family')
+			)
+	);
+
+![q7d](screenshot/q7d_use_join.png)
+![q7d](screenshot/q7d_use_where_in.png)
+```
