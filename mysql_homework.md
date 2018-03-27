@@ -320,3 +320,167 @@ IN
 ![q7d](screenshot/q7d_use_join.png)
 ![q7d](screenshot/q7d_use_where_in.png)
 ```
+
+## Question 7e. Display the most frequently rented movies in descending order..
+```sql
+SELECT 
+	f.title, SUM(t3.inventory_id_counts) AS times_rented
+FROM 
+	film AS f
+INNER JOIN 
+		(SELECT 
+			t1.film_id,t2.inventory_id_counts,t2.inventory_id
+		FROM 
+			inventory as t1
+		INNER JOIN 
+					(SELECT 
+						inventory_id, COUNT(*) as inventory_id_counts
+					FROM 
+						rental
+					GROUP BY 
+						inventory_id
+                        ) as t2
+		ON t1.inventory_id=t2.inventory_id
+        ) AS t3
+ON 
+	f.film_id=t3.film_id
+GROUP BY 
+	t3.film_id
+ORDER BY 
+	times_rented DESC;
+![q7e](screenshot/q7e_most_rented.png)
+```
+
+## Question 7f. Write a query to display how much business, in dollars, each store brought in.
+```sql
+SELECT 
+	a.address, t2.store_id,t2.revenue_store
+FROM 
+	address AS a
+INNER JOIN
+	(SELECT 
+		s.address_id,s.store_id,SUM(t1.revenue_staff) AS revenue_store
+		FROM store as s
+		INNER JOIN 
+		(SELECT 
+			staff_id,SUM(amount) AS revenue_staff
+		FROM 
+			payment
+		GROUP BY 
+			staff_id
+            ) as t1
+	ON 
+		s.manager_staff_id=t1.staff_id
+	GROUP BY 
+		s.store_id
+        ) as t2
+ON 
+	a.address_id=t2.address_id;
+
+![q7f](screenshot/q7f_revenue_store.png)
+```
+
+## Question 7g. Write a query to display for each store its store ID, city, and country.
+```sql
+SELECT t2.store_id, t2.city, (SELECT country FROM country WHERE country.country_id=t2.country_id) AS country
+FROM 
+	(SELECT c.city,c.country_id, t1.store_id
+	FROM city AS c
+	INNER JOIN
+		(SELECT 
+			store_id, (SELECT 
+								city_id 
+							FROM 
+								address 
+							WHERE 
+								store.address_id = address.address_id
+							) AS city_id
+		FROM store
+		) AS t1
+	ON c.city_id=t1.city_id
+    ) AS t2;
+![q7g](screenshot/q7g_store_city_country.png)
+```
+
+## Question 7h. List the top five genres in gross revenue in descending order. (**Hint**: you may need to use the following tables: category, film_category, inventory, payment, and rental.)
+```sql
+SELECT 
+	c.name, SUM(t3.sum_rental) AS sum_category
+FROM  
+	film_category AS fc
+INNER JOIN 
+	category AS c
+ON fc.category_id=c.category_id
+INNER JOIN 
+	(SELECT
+		i.film_id, t2.sum_rental 
+	FROM inventory AS i
+	INNER JOIN 
+		(SELECT 
+			r.inventory_id, t1.sum_rental, t1.rental_id
+		FROM rental AS r
+		INNER JOIN 
+			(SELECT 
+				rental_id,SUM(amount) AS sum_rental
+			FROM payment
+			GROUP BY rental_id
+            ) AS t1
+		ON r.rental_id=t1.rental_id
+        ) AS t2 
+	ON i.inventory_id=t2.inventory_id
+	) AS t3
+ON fc.film_id=t3.film_id
+GROUP BY fc.category_id
+ORDER BY sum_category DESC
+LIMIT 5;
+![q7h](screenshot/q7h_top5_genre.png)
+```
+
+## Question 8a. In your new role as an executive, you would like to have an easy way of viewing the Top five genres by gross revenue. Use the solution from the problem above to create a view. If you haven't solved 7h, you can substitute another query to create a view.
+```sql
+CREATE VIEW 
+	TOP_5_GENRE
+AS SELECT *
+FROM  
+(SELECT c.name, SUM(t3.sum_rental) AS sum_category
+FROM  
+	film_category AS fc
+INNER JOIN 
+	category AS c
+ON fc.category_id=c.category_id
+INNER JOIN 
+	(SELECT
+		i.film_id, t2.sum_rental 
+	FROM inventory AS i
+	INNER JOIN 
+		(SELECT 
+			r.inventory_id, t1.sum_rental, t1.rental_id
+		FROM rental AS r
+		INNER JOIN 
+			(SELECT 
+				rental_id,SUM(amount) AS sum_rental
+			FROM payment
+			GROUP BY rental_id
+            ) AS t1
+		ON r.rental_id=t1.rental_id
+        ) AS t2 
+	ON i.inventory_id=t2.inventory_id
+	) AS t3
+ON fc.film_id=t3.film_id
+GROUP BY fc.category_id
+ORDER BY sum_category DESC
+LIMIT 5) AS t4;
+
+![q8a](screenshot/q8a_create_view.png)
+```
+## Question 8b. How would you display the view that you created in 8a?
+```sql
+SELECT * FROM  top_5_genre;
+
+![q8b](screenshot/q8b_show_view.png)
+```
+## Question 8c. You find that you no longer need the view `top_five_genres`. Write a query to delete it.
+```sql
+DROP VIEW top_5_genre;
+![q8c](screenshot/q8c_drop_view.png)
+```
