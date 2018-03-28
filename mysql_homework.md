@@ -130,10 +130,10 @@ WHERE
 ![q4d](screenshot/q4d_if_change.png)
 ```
 
-## Question 5a. You cannot locate the schema of the `address` table. Which query would you use to re-create it?
+## Question 5. You cannot locate the schema of the `address` table. Which query would you use to re-create it?
 ```sql
-
-![q5a](screenshot/)
+SHOW CREATE TABLE address;
+![q5](screenshot/q5_show_table.png)
 ```
 
 ## Question 6a. Use `JOIN` to display the first and last names, as well as the address, of each staff member. Use the tables `staff` and `address`:
@@ -189,6 +189,7 @@ WHERE
 
 ![q6d](screenshot/q6d_suq_select.png)
 ```
+
 ## Question 6e. Using the tables `payment` and `customer` and the `JOIN` command, list the total paid by each customer. List the customers alphabetically by last name:
 ```sql
 SELECT c.first_name, c.last_name, p.Total_Amount_Paid
@@ -482,5 +483,6 @@ SELECT * FROM  top_5_genre;
 ## Question 8c. You find that you no longer need the view `top_five_genres`. Write a query to delete it.
 ```sql
 DROP VIEW top_5_genre;
+
 ![q8c](screenshot/q8c_drop_view.png)
 ```
