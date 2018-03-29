@@ -4,18 +4,14 @@
 ```sql
 -- switch database to sakila
 USE sakila;
--- actor table is sorted by actor_id so first actor's first_name and last_name 
-SELECT first_name, last_name FROM actor Order BY actor_id ASC LIMIT 1;
--- select the last row 
-SELECT first_name, last_name FROM actor Order BY actor_id DESC LIMIT 1;
+SELECT first_name,last_name FROM actor;
 
-![q1a_first](screenshot/q1a_first.png)
-![q1a_last](screenshot/q1a_last.png)
+![q1a](screenshot/q1a_actor_names.png)
 ```
 
 ## Question 1b. Display the first and last name of each actor in a single column in upper case letters. Name the column `Actor Name`
 ```sql
--- i am goin to concat first_name and last_name with a separator ',' they are already in upper case
+-- i am going to concat first_name and last_name with a separator ',' they are already in upper case
 SELECT CONCAT_WS (',', first_name,last_name) AS Actor_Name
 FROM actor;
 ![q1b](screenshot/q1b_Actor_Name.png)
@@ -147,33 +143,24 @@ ON staff.address_id=address.address_id;
 
 ## Question 6b. Use `JOIN` to display the total amount rung up by each staff member in August of 2005. Use tables `staff` and `payment`.
 ```sql
-SELECT 
-	s.first_name, s.last_name, p.SUM_Aug
-FROM 
-	staff AS s
+SELECT s.first_name,s.last_name,SUM(p.amount) AS Sum_Aug
+FROM staff AS s
 INNER JOIN
-	(SELECT 
-		staff_id, SUM(amount) AS SUM_Aug
-        FROM payment
-        WHERE DATE(payment_date) BETWEEN '2005-08-01' AND '2005-08-31'
-        GROUP BY staff_id) AS p
-ON s.staff_id=p.staff_id;
-![q6b](screenshot/q6b_inner_join_subq.png)
+	payment AS p
+ON s.staff_id=p.staff_id
+WHERE DATE(p.payment_date) BETWEEN '2005-08-01' AND '2005-08-31'
+GROUP BY p.staff_id;
+![q6b](screenshot/q6b_Aug_Payment.png)
 ```
 
 ## Question 6c. List each film and the number of actors who are listed for that film. Use tables `film_actor` and `film`. Use inner join.
 ```sql
-SELECT 
-	f.title, a.actor_counts
-FROM 
-	film AS f
-INNER JOIN 
-	(SELECT 
-		film_id, COUNT(actor_id) AS actor_counts
-		FROM film_actor
-		GROUP BY film_id) AS a
-ON f.film_id=a.film_id;
-![q6c](screenshot/q6c_inner_join_suq_again.png)
+SELECT f.title, COUNT(fa.actor_id) AS Actor_Count
+FROM film AS f
+INNER JOIN film_actor AS fa
+ON f.film_id=fa.film_id
+GROUP BY f.film_id;
+![q6c](screenshot/q6c_actor_counts.png)
 ```
 
 ## Question 6d. How many copies of the film `Hunchback Impossible` exist in the inventory system?
@@ -192,20 +179,17 @@ WHERE
 
 ## Question 6e. Using the tables `payment` and `customer` and the `JOIN` command, list the total paid by each customer. List the customers alphabetically by last name:
 ```sql
-SELECT c.first_name, c.last_name, p.Total_Amount_Paid
+SELECT c.first_name,c.last_name,SUM(p.amount) AS Total_Payment_Customer
 FROM customer AS c
--- USE left join just incase some customer does not pay (unlikely but still better to be safe)
-LEFT JOIN 
-				(SELECT 
-					customer_id, SUM(amount) as Total_Amount_Paid
-					FROM 
-						payment
-					GROUP BY 
-						customer_id) AS p
+INNER JOIN
+	payment AS p
 ON c.customer_id=p.customer_id
-ORDER BY c.last_name ASC;
+GROUP BY 
+	p.customer_id
+ORDER BY 
+	c.last_name ASC;
 
-![q6e](screenshot/q6e_suq_left_join.png)
+![q6e](screenshot/q6e_customer_payment.png)
 ```
 
 ## Question 7a. The music of Queen and Kris Kristofferson have seen an unlikely resurgence. As an unintended consequence, films starting with the letters `K` and `Q` have also soared in popularity. Use subqueries to display the titles of movies starting with the letters `K` and `Q` whose language is English.
@@ -246,22 +230,20 @@ IN
 ```sql
 -- this problem ask to use join but it can also be solved by using where I did both ways
 -- USE join to solve this problem
-SELECT t1.first_name, t1.last_name, t1.email
-FROM 
-			(SELECT c.first_name, c.last_name,c.email,a.city_id
-			FROM customer  AS c
-			INNER JOIN address AS a
-			ON c.address_id=a.address_id) AS t1
-INNER JOIN 
-			(SELECT city_id 
-			FROM city
-			WHERE country_id 
-			IN 
-				(SELECT country_id
-				FROM country
-				WHERE country='Canada')
-				) AS t2
-ON t1.city_id=t2.city_id;
+SELECT c.first_name, c.last_name,c.email
+FROM customer AS c
+INNER JOIN
+	address as a
+ON 
+	c.address_id=a.address_id
+INNER JOIN city 
+ON 
+	city.city_id=a.city_id
+INNER JOIN country
+ON
+	city.country_id=country.country_id
+WHERE 
+	country='Canada';
 
 -- USE SELECT WHERE
 SELECT first_name, last_name,email
@@ -293,14 +275,14 @@ IN
 SELECT f.title
 FROM film AS f
 INNER JOIN
-			(SELECT fc.film_id 
-			 FROM film_category AS fc
-			 INNER JOIN 
-						(SELECT category_id
-						FROM category
-						WHERE name='Family') as c
-			ON fc.category_id=c.category_id) AS t
-ON f.film_id=t.film_id;
+	film_category as fc
+ON 
+	fc.film_id=f.film_id
+INNER JOIN
+	category AS c
+ON
+	fc.category_id=c.category_id
+WHERE c.name='Family';
 
 -- USE SELECT WHERE IN
 SELECT title
@@ -324,115 +306,83 @@ IN
 
 ## Question 7e. Display the most frequently rented movies in descending order..
 ```sql
-SELECT 
-	f.title, SUM(t3.inventory_id_counts) AS times_rented
-FROM 
-	film AS f
-INNER JOIN 
-		(SELECT 
-			t1.film_id,t2.inventory_id_counts,t2.inventory_id
-		FROM 
-			inventory as t1
-		INNER JOIN 
-					(SELECT 
-						inventory_id, COUNT(*) as inventory_id_counts
-					FROM 
-						rental
-					GROUP BY 
-						inventory_id
-                        ) as t2
-		ON t1.inventory_id=t2.inventory_id
-        ) AS t3
-ON 
-	f.film_id=t3.film_id
-GROUP BY 
-	t3.film_id
-ORDER BY 
-	times_rented DESC;
+SELECT f.title, COUNT(r.rental_id) AS Counts
+FROM film AS f
+INNER JOIN inventory AS i
+ON f.film_id=i.film_id
+INNER JOIN rental AS r
+ON r.inventory_id=i.inventory_id
+GROUP BY f.film_id
+ORDER BY Counts DESC;
 ![q7e](screenshot/q7e_most_rented.png)
 ```
 
 ## Question 7f. Write a query to display how much business, in dollars, each store brought in.
 ```sql
 SELECT 
-	a.address, t2.store_id,t2.revenue_store
+	a.address, s.store_id, SUM(p.amount) AS Store_Revenue
 FROM 
-	address AS a
-INNER JOIN
-	(SELECT 
-		s.address_id,s.store_id,SUM(t1.revenue_staff) AS revenue_store
-		FROM store as s
-		INNER JOIN 
-		(SELECT 
-			staff_id,SUM(amount) AS revenue_staff
-		FROM 
-			payment
-		GROUP BY 
-			staff_id
-            ) as t1
-	ON 
-		s.manager_staff_id=t1.staff_id
-	GROUP BY 
-		s.store_id
-        ) as t2
+	address as a
+INNER JOIN 
+	store as s
 ON 
-	a.address_id=t2.address_id;
+	a.address_id=s.address_id
+INNER JOIN
+	payment as p
+ON 
+	s.manager_staff_id=p.staff_id
+GROUP BY
+	s.store_id;
 
 ![q7f](screenshot/q7f_revenue_store.png)
 ```
 
 ## Question 7g. Write a query to display for each store its store ID, city, and country.
 ```sql
-SELECT t2.store_id, t2.city, (SELECT country FROM country WHERE country.country_id=t2.country_id) AS country
+SELECT 
+	s.store_id, c.city, co.country
 FROM 
-	(SELECT c.city,c.country_id, t1.store_id
-	FROM city AS c
-	INNER JOIN
-		(SELECT 
-			store_id, (SELECT 
-								city_id 
-							FROM 
-								address 
-							WHERE 
-								store.address_id = address.address_id
-							) AS city_id
-		FROM store
-		) AS t1
-	ON c.city_id=t1.city_id
-    ) AS t2;
+	store AS s
+INNER JOIN
+	address
+ON 
+	s.address_id=address.address_id
+INNER JOIN
+	city AS c
+ON
+	c.city_id=address.city_id
+INNER JOIN
+	country AS co
+ON
+	co.country_id=c.country_id;
 ![q7g](screenshot/q7g_store_city_country.png)
 ```
 
 ## Question 7h. List the top five genres in gross revenue in descending order. (**Hint**: you may need to use the following tables: category, film_category, inventory, payment, and rental.)
 ```sql
 SELECT 
-	c.name, SUM(t3.sum_rental) AS sum_category
-FROM  
-	film_category AS fc
-INNER JOIN 
+	c.name, SUM(p.amount) AS Sum_Category
+FROM 
 	category AS c
-ON fc.category_id=c.category_id
 INNER JOIN 
-	(SELECT
-		i.film_id, t2.sum_rental 
-	FROM inventory AS i
-	INNER JOIN 
-		(SELECT 
-			r.inventory_id, t1.sum_rental, t1.rental_id
-		FROM rental AS r
-		INNER JOIN 
-			(SELECT 
-				rental_id,SUM(amount) AS sum_rental
-			FROM payment
-			GROUP BY rental_id
-            ) AS t1
-		ON r.rental_id=t1.rental_id
-        ) AS t2 
-	ON i.inventory_id=t2.inventory_id
-	) AS t3
-ON fc.film_id=t3.film_id
-GROUP BY fc.category_id
-ORDER BY sum_category DESC
+	film_category AS fc
+ON 
+	c.category_id=fc.category_id
+INNER JOIN 
+	inventory AS i
+ON 
+	fc.film_id=i.film_id
+INNER JOIN
+	rental AS r
+ON 
+	i.inventory_id=r.inventory_id
+INNER JOIN
+	payment AS p
+ON
+	r.rental_id=p.rental_id
+GROUP BY
+	c.name
+ORDER BY Sum_Category DESC
 LIMIT 5;
 ![q7h](screenshot/q7h_top5_genre.png)
 ```
@@ -441,36 +391,31 @@ LIMIT 5;
 ```sql
 CREATE VIEW 
 	TOP_5_GENRE
-AS SELECT *
-FROM  
-(SELECT c.name, SUM(t3.sum_rental) AS sum_category
-FROM  
-	film_category AS fc
-INNER JOIN 
-	category AS c
-ON fc.category_id=c.category_id
-INNER JOIN 
-	(SELECT
-		i.film_id, t2.sum_rental 
-	FROM inventory AS i
+AS SELECT * FROM  
+	(SELECT 
+		c.name, SUM(p.amount) AS Sum_Category
+	FROM 
+		category AS c
 	INNER JOIN 
-		(SELECT 
-			r.inventory_id, t1.sum_rental, t1.rental_id
-		FROM rental AS r
-		INNER JOIN 
-			(SELECT 
-				rental_id,SUM(amount) AS sum_rental
-			FROM payment
-			GROUP BY rental_id
-            ) AS t1
-		ON r.rental_id=t1.rental_id
-        ) AS t2 
-	ON i.inventory_id=t2.inventory_id
-	) AS t3
-ON fc.film_id=t3.film_id
-GROUP BY fc.category_id
-ORDER BY sum_category DESC
-LIMIT 5) AS t4;
+		film_category AS fc
+	ON 
+		c.category_id=fc.category_id
+	INNER JOIN 
+		inventory AS i
+	ON 
+		fc.film_id=i.film_id
+	INNER JOIN
+		rental AS r
+	ON 
+		i.inventory_id=r.inventory_id
+	INNER JOIN
+		payment AS p
+	ON
+		r.rental_id=p.rental_id
+	GROUP BY
+		c.name
+	ORDER BY Sum_Category DESC
+	LIMIT 5) as t1;  
 
 ![q8a](screenshot/q8a_create_view.png)
 ```
