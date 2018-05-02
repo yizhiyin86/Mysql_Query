@@ -1,5 +1,5 @@
 # Mysql Yizhi Yin
-Here I practiced SQL queries to retrieve data from sakila database.
+Here I practiced SQL queries to retrieve data from the sakila database. Sakila database has 16 tables and it is used as examples for sql training. More information about the database can be found at the <a href="https://dev.mysql.com/doc/sakila/en/sakila-introduction.html">link </a>.
 
 ## Question 1a. Display the first and last names of all actors from the table `actor`. 
 ```sql
@@ -8,28 +8,30 @@ USE sakila;
 SELECT first_name,last_name FROM actor;
 ```
  <img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q1a_actor_names.png" alt="screenshot of q1a">
+
 ## Question 1b. Display the first and last name of each actor in a single column in upper case letters. Name the column `Actor Name`
 ```sql
 -- i am going to concat first_name and last_name with a separator ',' they are already in upper case
 SELECT CONCAT_WS (',', first_name,last_name) AS Actor_Name
 FROM actor;
-![q1b](screenshot/q1b_Actor_Name.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q1b_Actor_Name.png" alt="screenshot of q1b">
+
 
 ## Question 2a. You need to find the ID number, first name, and last name of an actor, of whom you know only the first name, "Joe." What is one query would you use to obtain this information?
 ```sql
 SELECT first_name, last_name, actor_id 
 FROM actor
 WHERE first_name='Joe';
-![q2a](screenshot/q2a_Joe.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q2a_Joe.png" alt="screenshot of q2a">
 
 ## Question 2b. Find all actors whose last name contain the letters `GEN`:
 ```sql
 SELECT * FROM actor
 WHERE last_name LIKE "%GEN%";
-![q2b](screenshot/q2b_GEN.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q2b_GEN.png" alt="screenshot of q2b">
 
 ## Question 2c. Find all actors whose last names contain the letters `LI`. This time, order the rows by last name and first name, in that order:
 ```sql
@@ -39,39 +41,43 @@ WHERE last_name LIKE"%LI%"
 ORDER BY last_name ASC, first_name ASC;
 ![q2c](screenshot/q2c_LI_order.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q2c_LI_order.png" alt="screenshot of q2c">
 
 ## Question 2d. Using `IN`, display the `country_id` and `country` columns of the following countries: Afghanistan, Bangladesh, and China:
 ```sql
 SELECT country_id, country
 FROM country
 WHERE country IN ('Afghanistan', 'Bangladesh', 'China');
-
-![q2D](screenshot/q2D_IN.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q2d_IN.png" alt="screenshot of q2d">
+
 ## Question 3a. Add a `middle_name` column to the table `actor`. Position it between `first_name` and `last_name`. Hint: you will need to specify the data type.
 ```sql
 ALTER TABLE actor ADD middle_name VARCHAR(50) AFTER first_name;
 -- uncomment the line below to see the changed table
 -- SELECT * FROM actor LIMIT 5;
-![q3a](screenshot/q3a_middle_name.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q3a_middle_name.png" alt="screenshot of q3a">
+
 
 ## Question 3b. You realize that some of these actors have tremendously long last names. Change the data type of the `middle_name` column to `blobs`.
 ```sql
--- I do not understand we change the type of middle_name if the last name is too long, but whatever
+-- I do not understand why we change the type of middle_name if the last name is too long, but whatever
+
 ALTER TABLE actor MODIFY middle_name BLOB;
 -- uncomment the line below to see the field type has been changed
 -- DESCRIBE actor;
-![q3b](screenshot/q3b_BLOB.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q3b_BLOB.png" alt="screenshot of q3b">
+
 
 ## Question 3c. Now delete the `middle_name` column.
 ```sql
 ALTER TABLE actor DROP middle_name;
 -- uncomment the line below to see the field type has been changed
 -- DESCRIBE actor;
-![q3c](screenshot/q3c_DROP_mid_name.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q3c_DROP_mid_name.png" alt="screenshot of q3c">
 
 ## Question 4a. List the last names of actors, as well as how many actors have that last name.
 ```sql
@@ -82,9 +88,9 @@ FROM
 	actor
 GROUP BY
 	last_name;
-
-![q4a](screenshot/q4a_unique_count.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q4a_unique_count.png" alt="screenshot of q4a">
+
 ## Question 4b. List last names of actors and the number of actors who have that last name, but only for names that are shared by at least two actors.
 ```sql
 SELECT 
@@ -95,9 +101,9 @@ FROM
 GROUP BY
 	last_name
 HAVING COUNT(*)>=2;
-
-![q4b](screenshot/q4b_shared_unique_count.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q4b_shared_unique_count.png" alt="screenshot of q4b">
+
 
 ## Question 4c. Oh, no! The actor `HARPO WILLIAMS` was accidentally entered in the `actor` table as `GROUCHO WILLIAMS`, the name of Harpo's second cousin's husband's yoga teacher. Write a query to fix the record.
 ```sql
@@ -107,8 +113,8 @@ WHERE first_name='GROUCHO' and last_name='WILLIAMS';
 -- uncomment lines below to see the change
 -- SELECT * FROM actor
 -- WHERE first_name='HARPO' and last_name='WILLIAMS';
-![q4c](screenshot/q4c_name_change.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q4c_name_change.png" alt="screenshot of q4c">
 
 ## Question 4d. Perhaps we were too hasty in changing `GROUCHO` to `HARPO`. It turns out that `GROUCHO` was the correct name after all! In a single query, if the first name of the actor is currently `HARPO`, change it to `GROUCHO`. Otherwise, change the first name to `MUCHO GROUCHO`, as that is exactly what the actor will be with the grievous error. BE CAREFUL NOT TO CHANGE THE FIRST NAME OF EVERY ACTOR TO `MUCHO GROUCHO`, HOWEVER! (Hint: update the record using a unique identifier.)
 ```sql
@@ -122,14 +128,14 @@ WHERE
 -- uncomment lines below to see the change   
 -- SELECT * FROM actor
 -- WHERE actor_id=172;
-![q4d](screenshot/q4d_if_change.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q4d_if_change.png" alt="screenshot of q4d">
 
 ## Question 5. You cannot locate the schema of the `address` table. Which query would you use to re-create it?
 ```sql
 SHOW CREATE TABLE address;
-![q5](screenshot/q5_show_table.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q5_show_table.png" alt="screenshot of q5">
 
 ## Question 6a. Use `JOIN` to display the first and last names, as well as the address, of each staff member. Use the tables `staff` and `address`:
 ```sql
@@ -137,8 +143,8 @@ SELECT staff.first_name, staff.last_name, address. address
 FROM staff 
 INNER JOIN address
 ON staff.address_id=address.address_id;
-![q6a](screenshot/q6a_inner_join.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q6a_inner_join.png" alt="screenshot of q6a">
 
 ## Question 6b. Use `JOIN` to display the total amount rung up by each staff member in August of 2005. Use tables `staff` and `payment`.
 ```sql
@@ -149,8 +155,9 @@ INNER JOIN
 ON s.staff_id=p.staff_id
 WHERE DATE(p.payment_date) BETWEEN '2005-08-01' AND '2005-08-31'
 GROUP BY p.staff_id;
-![q6b](screenshot/q6b_Aug_Payment.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q6b_Aug_Payment.png" alt="screenshot of q6b">
+
 
 ## Question 6c. List each film and the number of actors who are listed for that film. Use tables `film_actor` and `film`. Use inner join.
 ```sql
@@ -159,8 +166,8 @@ FROM film AS f
 INNER JOIN film_actor AS fa
 ON f.film_id=fa.film_id
 GROUP BY f.film_id;
-![q6c](screenshot/q6c_actor_counts.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q6c_actor_counts.png" alt="screenshot of q6c">
 
 ## Question 6d. How many copies of the film `Hunchback Impossible` exist in the inventory system?
 ```sql
@@ -172,9 +179,8 @@ WHERE
 					FROM film
                     WHERE title='Hunchback Impossible'
                     );
-
-![q6d](screenshot/q6d_suq_select.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q6d_suq_select.png" alt="screenshot of q6d">
 
 ## Question 6e. Using the tables `payment` and `customer` and the `JOIN` command, list the total paid by each customer. List the customers alphabetically by last name:
 ```sql
@@ -187,9 +193,8 @@ GROUP BY
 	p.customer_id
 ORDER BY 
 	c.last_name ASC;
-
-![q6e](screenshot/q6e_customer_payment.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q6e_customer_payment.png" alt="screenshot of q6e">
 
 ## Question 7a. The music of Queen and Kris Kristofferson have seen an unlikely resurgence. As an unintended consequence, films starting with the letters `K` and `Q` have also soared in popularity. Use subqueries to display the titles of movies starting with the letters `K` and `Q` whose language is English.
 ```sql
@@ -203,9 +208,8 @@ AND
 				FROM language
 				WHERE name='English')
 				);
-
-![q7a](screenshot/q7a_K_Q.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q7a_K_Q.png" alt="screenshot of q7a">
 
 ## Question 7b. Use subqueries to display all actors who appear in the film `Alone Trip`.
 ```sql
@@ -222,8 +226,9 @@ IN
 		WHERE title='Alone Trip')
         );
 
-![q7b](screenshot/q7b_sub_sub.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q7b_sub_sub.png" alt="screenshot of q7b">
+
 
 ## Question 7c. You want to run an email marketing campaign in Canada, for which you will need the names and email addresses of all Canadian customers. Use joins to retrieve this information.
 ```sql
@@ -262,10 +267,9 @@ IN
 						WHERE country='Canada')
 						) 
 						);
-
-![q7c](screenshot/q7c_use_join.png)
-![q7c](screenshot/q7c_use_where.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q7c_use_join.png" alt="screenshot of q7c">
+
 
 ## Question 7d. Sales have been lagging among young families, and you wish to target all family movies for a promotion. Identify all movies categorized as famiy films.
 ```sql
@@ -298,10 +302,9 @@ IN
 			 WHERE name='Family')
 			)
 	);
-
-![q7d](screenshot/q7d_use_join.png)
-![q7d](screenshot/q7d_use_where_in.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q7d_use_join.png" alt="screenshot of q7d">
+
 
 ## Question 7e. Display the most frequently rented movies in descending order..
 ```sql
@@ -313,8 +316,8 @@ INNER JOIN rental AS r
 ON r.inventory_id=i.inventory_id
 GROUP BY f.film_id
 ORDER BY Counts DESC;
-![q7e](screenshot/q7e_most_rented.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q7e_most_rented.png" alt="screenshot of q7e">
 
 ## Question 7f. Write a query to display how much business, in dollars, each store brought in.
 ```sql
@@ -332,9 +335,8 @@ ON
 	s.manager_staff_id=p.staff_id
 GROUP BY
 	s.store_id;
-
-![q7f](screenshot/q7f_revenue_store.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q7f_revenue_store.png" alt="screenshot of q7f">
 
 ## Question 7g. Write a query to display for each store its store ID, city, and country.
 ```sql
@@ -354,8 +356,9 @@ INNER JOIN
 	country AS co
 ON
 	co.country_id=c.country_id;
-![q7g](screenshot/q7g_store_city_country.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q7g_store_city_country.png" alt="screenshot of q7g">
+
 
 ## Question 7h. List the top five genres in gross revenue in descending order. (**Hint**: you may need to use the following tables: category, film_category, inventory, payment, and rental.)
 ```sql
@@ -383,8 +386,9 @@ GROUP BY
 	c.name
 ORDER BY Sum_Category DESC
 LIMIT 5;
-![q7h](screenshot/q7h_top5_genre.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q7h_top5_genre.png" alt="screenshot of q7h">
+
 
 ## Question 8a. In your new role as an executive, you would like to have an easy way of viewing the Top five genres by gross revenue. Use the solution from the problem above to create a view. If you haven't solved 7h, you can substitute another query to create a view.
 ```sql
@@ -415,18 +419,19 @@ AS SELECT * FROM
 		c.name
 	ORDER BY Sum_Category DESC
 	LIMIT 5) as t1;  
-
-![q8a](screenshot/q8a_create_view.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q8a_create_view.png" alt="screenshot of q8a">
+
 ## Question 8b. How would you display the view that you created in 8a?
 ```sql
 SELECT * FROM  top_5_genre;
 
-![q8b](screenshot/q8b_show_view.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q8b_show_view.png" alt="screenshot of q8b">
+
 ## Question 8c. You find that you no longer need the view `top_five_genres`. Write a query to delete it.
 ```sql
 DROP VIEW top_5_genre;
-
-![q8c](screenshot/q8c_drop_view.png)
 ```
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q8c_drop_view.png" alt="screenshot of q8b">
+
