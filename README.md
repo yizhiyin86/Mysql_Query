@@ -1,6 +1,6 @@
 # SQL Query using Mysql
 
-<p>Here I practiced SQL queries to retrieve data from the sakila database. Sakila database has 16 tables and it is used as examples for sql training. More information about the database can be found at the <a href="https://dev.mysql.com/doc/sakila/en/sakila-introduction.html">link </a> </p>.
+<p>Here I practiced SQL queries to retrieve data from the sakila database. Sakila database has 16 tables and it is used as examples for sql training. More information about the database can be found at the <a href="https://dev.mysql.com/doc/sakila/en/sakila-introduction.html">link</a>. </p>
 <p>Below are the query and a screenshot of the result for each question.</p>
 <p>Question 6-8 requires joining of up to 5 tables.</p>
 
