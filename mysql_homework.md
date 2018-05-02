@@ -6,9 +6,8 @@ Here I practiced SQL queries to retrieve data from sakila database.
 -- switch database to sakila
 USE sakila;
 SELECT first_name,last_name FROM actor;
-
- <img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q1a_actor_names.png" alt="screenshot of q1a">
 ```
+ <img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q1a_actor_names.png" alt="screenshot of q1a">
 ## Question 1b. Display the first and last name of each actor in a single column in upper case letters. Name the column `Actor Name`
 ```sql
 -- i am going to concat first_name and last_name with a separator ',' they are already in upper case
