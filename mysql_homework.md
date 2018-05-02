@@ -1,4 +1,5 @@
-# Mysql_homework Yizhi Yin
+# Mysql Yizhi Yin
+Here I practiced SQL queries to retrieve data from sakila database.
 
 ## Question 1a. Display the first and last names of all actors from the table `actor`. 
 ```sql
@@ -6,8 +7,8 @@
 USE sakila;
 SELECT first_name,last_name FROM actor;
 
-![q1a](screenshot/q1a_actor_names.png)
 ```
+ <img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q1a_actor_names.png" alt="screenshot of q1a">
 
 ## Question 1b. Display the first and last name of each actor in a single column in upper case letters. Name the column `Actor Name`
 ```sql
