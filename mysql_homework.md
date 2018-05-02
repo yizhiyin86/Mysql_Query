@@ -39,7 +39,6 @@ WHERE last_name LIKE "%GEN%";
 SELECT * FROM actor
 WHERE last_name LIKE"%LI%"
 ORDER BY last_name ASC, first_name ASC;
-![q2c](screenshot/q2c_LI_order.png)
 ```
 <img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q2c_LI_order.png" alt="screenshot of q2c">
 
@@ -433,5 +432,5 @@ SELECT * FROM  top_5_genre;
 ```sql
 DROP VIEW top_5_genre;
 ```
-<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q8c_drop_view.png" alt="screenshot of q8b">
+<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q8c_drop_view.png" alt="screenshot of q8c">
 
