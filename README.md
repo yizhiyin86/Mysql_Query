@@ -187,17 +187,18 @@ WHERE
 
 ## Question 6e. Using the tables `payment` and `customer` and the `JOIN` command, list the total paid by each customer. List the customers alphabetically by last name:
 ```sql
-SELECT c.first_name,c.last_name,SUM(p.amount) AS Total_Payment_Customer
-FROM customer AS c
-INNER JOIN
-	payment AS p
-ON c.customer_id=p.customer_id
+SELECT  c.first_name, c.last_name, IFNULL(SUM(p.amount),0) as Total_Payment_Customer
+FROM 
+	customer as c
+JOIN 
+	payment as p
+ON
+	p.customer_id = c.customer_id
 GROUP BY 
 	p.customer_id
-ORDER BY 
-	c.last_name ASC;
+ORDER BY c.last_name ASC;
 ```
-<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q6e_customer_payment.png" alt="screenshot of q6e">
+<img src="https://github.com/yizhiyin86/Mysql_Query/blob/master/screenshot/q6e_new.png" alt="screenshot of q6e">
 
 ## Question 7a. The music of Queen and Kris Kristofferson have seen an unlikely resurgence. As an unintended consequence, films starting with the letters `K` and `Q` have also soared in popularity. Use subqueries to display the titles of movies starting with the letters `K` and `Q` whose language is English.
 ```sql
