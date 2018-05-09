@@ -196,6 +196,7 @@ ORDER BY
 <img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q6e_customer_payment.png" alt="screenshot of q6e">
 
 ## Question 7a. The music of Queen and Kris Kristofferson have seen an unlikely resurgence. As an unintended consequence, films starting with the letters `K` and `Q` have also soared in popularity. Use subqueries to display the titles of movies starting with the letters `K` and `Q` whose language is English.
+<li> Use subquery</li>
 ```sql
 SELECT title
 FROM film
@@ -209,6 +210,22 @@ AND
 				);
 ```
 <img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q7a_K_Q.png" alt="screenshot of q7a">
+<li>Use Join</li>
+```sql
+SELECT f.title
+FROM 
+	film as f
+JOIN
+	language as l
+ON 
+	l.language_id=f.language_id
+WHERE
+	(f.title LIKE 'K%' OR f.title LIKE 'Q%')
+    AND
+   (l.name='English');
+```
+
+<img src="https://github.com/yizhiyin86/Mysql_Query/blob/master/screenshot/q7a_use_join.png" alt="screenshot of q7a using join">
 
 ## Question 7b. Use subqueries to display all actors who appear in the film `Alone Trip`.
 ```sql
