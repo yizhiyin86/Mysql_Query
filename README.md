@@ -173,14 +173,15 @@ GROUP BY f.film_id;
 
 ## Question 6d. How many copies of the film `Hunchback Impossible` exist in the inventory system?
 ```sql
-SELECT COUNT(*) AS copy
-FROM 
-	inventory
-WHERE 
-	film_id=(SELECT film_id 
-					FROM film
-                    WHERE title='Hunchback Impossible'
-                    );
+SELECT COUNT(i.inventory_id) as Number_Copies, f.title 
+FROM
+	film as f
+JOIN 
+	inventory as i
+ON 
+	f.film_id=i.film_id
+WHERE
+	f.title='Hunchback Impossible';
 ```
 <img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q6d_suq_select.png" alt="screenshot of q6d">
 
