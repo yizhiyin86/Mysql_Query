@@ -216,6 +216,9 @@ AND
 <img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q7a_K_Q.png" alt="screenshot of q7a">
 
 ## Question 7b. Use subqueries to display all actors who appear in the film `Alone Trip`.
+
+<li>Use Subquery</li>
+
 ```sql
 SELECT first_name, last_name
 FROM actor
@@ -233,6 +236,28 @@ IN
 ```
 <img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q7b_sub_sub.png" alt="screenshot of q7b">
 
+<li>Use Join</li>
+
+```sql
+
+SELECT 
+	a.first_name, a.last_name 
+FROM actor as a
+INNER JOIN
+	film_actor as fa
+ON 
+	a.actor_id=fa.actor_id
+INNER JOIN
+    film as f
+ON 
+	f.film_id=fa.film_id
+WHERE
+	f.title='Alone Trip';
+
+```
+
+
+<img src="https://github.com/yizhiyin86/Mysql_Query/blob/master/screenshot/q7b_use_join.png" alt="screenshot of q7b use join">
 
 ## Question 7c. You want to run an email marketing campaign in Canada, for which you will need the names and email addresses of all Canadian customers. Use joins to retrieve this information.
 ```sql
