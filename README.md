@@ -425,8 +425,7 @@ LIMIT 5;
 ```sql
 CREATE VIEW 
 	TOP_5_GENRE
-AS SELECT * FROM  
-	(SELECT 
+AS   	(SELECT 
 		c.name, SUM(p.amount) AS Sum_Category
 	FROM 
 		category AS c
@@ -449,7 +448,7 @@ AS SELECT * FROM
 	GROUP BY
 		c.name
 	ORDER BY Sum_Category DESC
-	LIMIT 5) as t1;  
+	LIMIT 5);  
 ```
 <img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q8a_create_view.png" alt="screenshot of q8a">
 
