@@ -183,7 +183,7 @@ ON
 WHERE
 	f.title='Hunchback Impossible';
 ```
-<img src="https://github.com/yizhiyin86/Mysql_homework/blob/master/screenshot/q6d_suq_select.png" alt="screenshot of q6d">
+<img src="https://github.com/yizhiyin86/Mysql_Query/blob/master/screenshot/q6d_new.png" alt="screenshot of q6d">
 
 ## Question 6e. Using the tables `payment` and `customer` and the `JOIN` command, list the total paid by each customer. List the customers alphabetically by last name:
 ```sql
